@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>INFOSEC SHIFT COMMAND CENTER</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+<!-- Animated Background -->
+<div class="bg-grid"></div>
+<div class="particles"></div>
+
+<div class="dashboard">
+
+    <!-- HEADER -->
+    <header class="topbar">
+
+        <div class="brand">
+            <h1>INFOSEC SHIFT COMMAND CENTER</h1>
+            <span>Live Workforce Dashboard</span>
+        </div>
+
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <div class="clock-card glass">
+
+            <h3>Current Time</h3>
+
+            <div id="clock" class="clock">
+                00:00:00
+            </div>
+
+            <div id="todayDate" class="date">
+                Loading...
+            </div>
+
+        </div>
+
+        <div class="shift-card glass">
+
+            <h3>Current Shift</h3>
+
+            <div id="currentShift" class="shift-badge">
+                --
+            </div>
+
+            <div class="countdown-label">
+                Shift Ends In
+            </div>
+
+            <div id="shiftCountdown" class="countdown">
+                00:00:00
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- SHIFT COUNTS -->
+    <section class="stats-grid">
+
+        <div class="stat glass">
+            <h4>S1</h4>
+            <span id="s1Count">0</span>
+        </div>
+
+        <div class="stat glass">
+            <h4>S2</h4>
+            <span id="s2Count">0</span>
+        </div>
+
+        <div class="stat glass">
+            <h4>S3</h4>
+            <span id="s3Count">0</span>
+        </div>
+
+        <div class="stat glass">
+            <h4>OFF</h4>
+            <span id="offCount">0</span>
+        </div>
+
+    </section>
+
+    <!-- OFF TODAY -->
+    <section class="off-section">
+
+        <div class="glass off-card">
+
+            <h2>OFF TODAY</h2>
+
+            <div id="offPeople">
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- LIVE STAFF -->
+    <section class="section-title">
+
+        <h2>Currently On Shift</h2>
+
+    </section>
+
+    <section
+        id="staffContainer"
+        class="staff-container">
+
+    </section>
+
+    <!-- NEXT SHIFT -->
+    <section class="next-section">
+
+        <div class="next-card glass">
+
+            <h2>Upcoming Shift</h2>
+
+            <div
+                id="nextShiftName"
+                class="next-shift-name">
+
+                --
+
+            </div>
+
+            <div
+                id="nextShiftTime"
+                class="next-shift-time">
+
+                --
+
+            </div>
+
+            <div
+                id="nextShiftPeople"
+                class="next-people">
+
+                Loading...
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- STAFF CARD TEMPLATE -->
+
+<template id="staffTemplate">
+
+    <div class="staff-card glass">
+
+        <div class="avatar-wrap">
+
+            <img
+                class="avatar"
+                src=""
+                alt="Employee">
+
+        </div>
+
+        <div class="staff-name">
+
+            Employee
+
+        </div>
+
+        <div class="staff-shift">
+
+            S1
+
+        </div>
+
+        <div class="progress-wrap">
+
+            <div class="progress-bar">
+
+                <div class="progress-fill">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="progress-text">
+
+            0%
+
+        </div>
+
+        <div class="remaining-time">
+
+            00:00:00 Remaining
+
+        </div>
+
+    </div>
+
+</template>
+
+<script src="script.js"></script>
+
+</body>
+</html>
