@@ -907,3 +907,15 @@ RESPONSIVE
         font-size:1.4rem;
     }
 }
+@media(max-width:900px){
+
+    .calendar-layout{
+
+        grid-template-columns:1fr;
+    }
+
+    .selected-day-roster{
+
+        min-height:auto;
+    }
+}
