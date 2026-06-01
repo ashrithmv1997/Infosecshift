@@ -716,18 +716,42 @@ MODAL
 CALENDAR
 ========================== */
 
+.calendar-layout{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:25px;
+
+    align-items:start;
+}
+
 .calendar-grid{
 
     display:grid;
 
-    grid-template-columns:
-    repeat(7,1fr);
+    grid-template-columns:repeat(7,1fr);
 
     gap:10px;
-
-    margin-top:20px;
 }
 
+.selected-day-roster{
+
+    min-height:420px;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    position:sticky;
+
+    top:0;
+}
 .calendar-day{
 
     min-height:80px;
