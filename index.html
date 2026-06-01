@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>INFOSEC SHIFT COMMAND CENTER</title>
+<title>INFOSEC SHIFT COMMAND CENTER V2</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,27 +15,59 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 </head>
 
 <body>
 
-<!-- Animated Background -->
+<!-- BACKGROUND -->
 <div class="bg-grid"></div>
 <div class="particles"></div>
 
 <div class="dashboard">
 
+    <!-- ===================================== -->
     <!-- HEADER -->
+    <!-- ===================================== -->
+
     <header class="topbar">
 
         <div class="brand">
+
             <h1>INFOSEC SHIFT COMMAND CENTER</h1>
-            <span>Live Workforce Dashboard</span>
+
+            <span>
+                Live Workforce Operations Dashboard
+            </span>
+
+        </div>
+
+        <div class="top-actions">
+
+            <button
+                id="calendarBtn"
+                class="action-btn">
+
+                📅 Calendar
+
+            </button>
+
+            <button
+                id="offFinderBtn"
+                class="action-btn">
+
+                🏖 OFF Finder
+
+            </button>
+
         </div>
 
     </header>
 
+    <!-- ===================================== -->
     <!-- HERO -->
+    <!-- ===================================== -->
+
     <section class="hero">
 
         <div class="clock-card glass">
@@ -53,50 +86,86 @@
 
         <div class="shift-card glass">
 
-            <h3>Current Shift</h3>
+            <h3>Active Shifts Now</h3>
 
-            <div id="currentShift" class="shift-badge">
-                --
+            <div
+                id="activeShiftDisplay"
+                class="shift-badge">
+
+                S1
+
             </div>
 
             <div class="countdown-label">
-                Shift Ends In
+
+                Next Shift Change In
+
             </div>
 
-            <div id="shiftCountdown" class="countdown">
+            <div
+                id="shiftCountdown"
+                class="countdown">
+
                 00:00:00
+
             </div>
 
         </div>
 
     </section>
 
-    <!-- SHIFT COUNTS -->
+    <!-- ===================================== -->
+    <!-- COUNTS -->
+    <!-- ===================================== -->
+
     <section class="stats-grid">
 
         <div class="stat glass">
+
             <h4>S1</h4>
-            <span id="s1Count">0</span>
+
+            <span id="s1Count">
+                0
+            </span>
+
         </div>
 
         <div class="stat glass">
+
             <h4>S2</h4>
-            <span id="s2Count">0</span>
+
+            <span id="s2Count">
+                0
+            </span>
+
         </div>
 
         <div class="stat glass">
+
             <h4>S3</h4>
-            <span id="s3Count">0</span>
+
+            <span id="s3Count">
+                0
+            </span>
+
         </div>
 
         <div class="stat glass">
+
             <h4>OFF</h4>
-            <span id="offCount">0</span>
+
+            <span id="offCount">
+                0
+            </span>
+
         </div>
 
     </section>
 
+    <!-- ===================================== -->
     <!-- OFF TODAY -->
+    <!-- ===================================== -->
+
     <section class="off-section">
 
         <div class="glass off-card">
@@ -111,10 +180,13 @@
 
     </section>
 
-    <!-- LIVE STAFF -->
+    <!-- ===================================== -->
+    <!-- ACTIVE STAFF -->
+    <!-- ===================================== -->
+
     <section class="section-title">
 
-        <h2>Currently On Shift</h2>
+        <h2>Currently Working</h2>
 
     </section>
 
@@ -124,7 +196,10 @@
 
     </section>
 
+    <!-- ===================================== -->
     <!-- NEXT SHIFT -->
+    <!-- ===================================== -->
+
     <section class="next-section">
 
         <div class="next-card glass">
@@ -161,7 +236,9 @@
 
 </div>
 
+<!-- ===================================== -->
 <!-- STAFF CARD TEMPLATE -->
+<!-- ===================================== -->
 
 <template id="staffTemplate">
 
@@ -212,9 +289,109 @@
 
         </div>
 
+        <div class="next-off">
+
+            Next OFF: --
+
+        </div>
+
     </div>
 
 </template>
+
+<!-- ===================================== -->
+<!-- CALENDAR MODAL -->
+<!-- ===================================== -->
+
+<div
+    id="calendarModal"
+    class="modal">
+
+    <div class="modal-content glass">
+
+        <div class="modal-header">
+
+            <h2>
+                Monthly Shift Calendar
+            </h2>
+
+            <button
+                class="close-btn"
+                id="closeCalendar">
+
+                ✖
+
+            </button>
+
+        </div>
+
+        <div
+            id="calendarGrid"
+            class="calendar-grid">
+
+        </div>
+
+        <div
+            id="selectedDayRoster"
+            class="selected-day-roster">
+
+            Select a date to view roster
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- OFF FINDER MODAL -->
+<!-- ===================================== -->
+
+<div
+    id="offModal"
+    class="modal">
+
+    <div class="modal-content glass">
+
+        <div class="modal-header">
+
+            <h2>
+                OFF Finder
+            </h2>
+
+            <button
+                class="close-btn"
+                id="closeOffFinder">
+
+                ✖
+
+            </button>
+
+        </div>
+
+        <div class="off-finder-wrap">
+
+            <select id="employeeSelect">
+
+                <option value="">
+                    Select Employee
+                </option>
+
+            </select>
+
+            <div
+                id="offResults"
+                class="off-results">
+
+                Select an employee
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script src="script.js"></script>
 
