@@ -1,74 +1,121 @@
 // ==========================================
-// INFOSEC SHIFT COMMAND CENTER
-// AUTO LOAD EXCEL VERSION
-// CLOUDLFARE READY
+// INFOSEC SHIFT COMMAND CENTER V2
+// script.js PART 1
+// CORE ENGINE + EXCEL PARSER
 // ==========================================
 
-// ----------------------------
+// ==========================================
 // DOM
-// ----------------------------
+// ==========================================
 
-const clock = document.getElementById("clock");
-const todayDate = document.getElementById("todayDate");
+const clock =
+document.getElementById("clock");
 
-const currentShiftEl =
-document.getElementById("currentShift");
+const todayDate =
+document.getElementById("todayDate");
+
+const activeShiftDisplay =
+document.getElementById(
+    "activeShiftDisplay"
+);
 
 const shiftCountdown =
-document.getElementById("shiftCountdown");
+document.getElementById(
+    "shiftCountdown"
+);
 
 const s1Count =
-document.getElementById("s1Count");
+document.getElementById(
+    "s1Count"
+);
 
 const s2Count =
-document.getElementById("s2Count");
+document.getElementById(
+    "s2Count"
+);
 
 const s3Count =
-document.getElementById("s3Count");
+document.getElementById(
+    "s3Count"
+);
 
 const offCount =
-document.getElementById("offCount");
+document.getElementById(
+    "offCount"
+);
 
 const staffContainer =
-document.getElementById("staffContainer");
+document.getElementById(
+    "staffContainer"
+);
 
 const nextShiftName =
-document.getElementById("nextShiftName");
+document.getElementById(
+    "nextShiftName"
+);
 
 const nextShiftTime =
-document.getElementById("nextShiftTime");
+document.getElementById(
+    "nextShiftTime"
+);
 
 const nextShiftPeople =
-document.getElementById("nextShiftPeople");
+document.getElementById(
+    "nextShiftPeople"
+);
 
 const template =
-document.getElementById("staffTemplate");
+document.getElementById(
+    "staffTemplate"
+);
 
-// ----------------------------
-// PHOTOS
-// ----------------------------
+// ==========================================
+// MODALS
+// ==========================================
 
-const PHOTO_MAP = {
+const calendarBtn =
+document.getElementById(
+    "calendarBtn"
+);
 
-    "ASHWIN":
-    "ashwin.jpg",
+const offFinderBtn =
+document.getElementById(
+    "offFinderBtn"
+);
 
-    "RAHUL R G":
-    "rahul.jpg",
+const calendarModal =
+document.getElementById(
+    "calendarModal"
+);
 
-    "HARI":
-    "hari.jpg",
+const offModal =
+document.getElementById(
+    "offModal"
+);
 
-    "ASHRITH":
-    "ashrith.jpg",
+const calendarGrid =
+document.getElementById(
+    "calendarGrid"
+);
 
-    "MANU":
-    "manu.jpg"
-};
+const selectedDayRoster =
+document.getElementById(
+    "selectedDayRoster"
+);
 
-// ----------------------------
+const employeeSelect =
+document.getElementById(
+    "employeeSelect"
+);
+
+const offResults =
+document.getElementById(
+    "offResults"
+);
+
+// ==========================================
 // SHIFT DEFINITIONS
-// ----------------------------
+// ==========================================
 
 const SHIFTS = {
 
@@ -76,47 +123,72 @@ const SHIFTS = {
 
         start: "07:30",
 
-        end: "15:30"
+        end: "15:30",
+
+        label:
+        "07:30 AM → 03:30 PM"
     },
 
     S2: {
 
         start: "13:30",
 
-        end: "22:00"
+        end: "22:00",
+
+        label:
+        "01:30 PM → 10:00 PM"
     },
 
     S3: {
 
         start: "21:30",
 
-        end: "08:00"
+        end: "08:00",
+
+        label:
+        "09:30 PM → 08:00 AM"
     }
 };
 
-const SHIFT_DISPLAY = {
+// ==========================================
+// EMPLOYEE PHOTOS
+// ==========================================
 
-    S1:
-    "07:30 AM → 03:30 PM",
+const PHOTO_MAP = {
 
-    S2:
-    "01:30 PM → 10:00 PM",
+    "ASHWIN":
+    "photos/ashwin.jpg",
 
-    S3:
-    "09:30 PM → 08:00 AM"
+    "RAHUL R G":
+    "photos/rahul.jpg",
+
+    "HARI":
+    "photos/hari.jpg",
+
+    "ASHRITH":
+    "photos/ashrith.jpg",
+
+    "MANU":
+    "photos/manu.jpg"
 };
 
-// ----------------------------
-// GLOBALS
-// ----------------------------
+// ==========================================
+// GLOBAL DATA STORE
+// ==========================================
+
+let monthRoster = {};
 
 let todayRoster = {};
 
+let employeeNames = [];
+
 let activeCards = [];
 
-// ----------------------------
+let currentDateKey = "";
+
+// ==========================================
 // CLOCK
-// ----------------------------
+// ==========================================
 
 function updateClock(){
 
@@ -147,40 +219,102 @@ setInterval(
 
 updateClock();
 
-// ----------------------------
-// TIME HELPERS
-// ----------------------------
+// ==========================================
+// EXCEL DATE HELPER
+// ==========================================
 
-function timeToDate(time){
+function excelToDate(
+    serial
+){
+
+    return new Date(
+
+        (
+            serial - 25569
+        )
+        *
+        86400
+        *
+        1000
+    );
+}
+
+// ==========================================
+// DATE KEY
+// YYYY-MM-DD
+// ==========================================
+
+function getDateKey(
+    date
+){
+
+    const y =
+    date.getFullYear();
+
+    const m =
+    String(
+        date.getMonth()+1
+    )
+    .padStart(2,"0");
+
+    const d =
+    String(
+        date.getDate()
+    )
+    .padStart(2,"0");
+
+    return `${y}-${m}-${d}`;
+}
+
+// ==========================================
+// TIME HELPERS
+// ==========================================
+
+function timeToDate(
+    timeString
+){
 
     const [h,m] =
-    time.split(":");
+    timeString.split(":");
 
     const d =
     new Date();
 
-    d.setHours(Number(h));
-    d.setMinutes(Number(m));
+    d.setHours(
+        Number(h)
+    );
+
+    d.setMinutes(
+        Number(m)
+    );
+
     d.setSeconds(0);
+
     d.setMilliseconds(0);
 
     return d;
 }
 
-function formatRemaining(ms){
+function formatRemaining(
+    ms
+){
 
     if(ms < 0)
         ms = 0;
 
     const total =
-    Math.floor(ms / 1000);
+    Math.floor(ms/1000);
 
     const hrs =
-    Math.floor(total / 3600);
+    Math.floor(
+        total / 3600
+    );
 
     const mins =
     Math.floor(
-        (total % 3600) / 60
+        (
+            total % 3600
+        ) / 60
     );
 
     const secs =
@@ -207,117 +341,169 @@ function formatRemaining(ms){
     );
 }
 
-// ----------------------------
-// CURRENT SHIFT
-// ----------------------------
+// ==========================================
+// ACTIVE SHIFTS
+// SUPPORTS OVERLAP
+// ==========================================
 
-function getCurrentShift(){
+function getActiveShifts(){
 
     const now =
     new Date();
 
     const mins =
 
-        now.getHours() * 60
+        now.getHours()
+        *
+        60
+
         +
+
         now.getMinutes();
 
+    const active = [];
+
+    // S1
     if(
         mins >= 450 &&
         mins < 930
     ){
-        return "S1";
+
+        active.push(
+            "S1"
+        );
     }
 
+    // S2
     if(
         mins >= 810 &&
         mins < 1320
     ){
-        return "S2";
+
+        active.push(
+            "S2"
+        );
     }
 
-    return "S3";
+    // S3
+    if(
+
+        mins >= 1290
+
+        ||
+
+        mins < 480
+
+    ){
+
+        active.push(
+            "S3"
+        );
+    }
+
+    return active;
 }
 
-// ----------------------------
-// SHIFT END
-// ----------------------------
+// ==========================================
+// NEXT SHIFT CHANGE
+// ==========================================
 
-function getShiftEnd(shift){
+function getNextBoundary(){
 
     const now =
     new Date();
 
-    let end;
+    const candidates = [
 
-    if(shift === "S1"){
+        "07:30",
 
-        end =
-        timeToDate("15:30");
-    }
+        "13:30",
 
-    else if(
-        shift === "S2"
-    ){
+        "15:30",
 
-        end =
-        timeToDate("22:00");
-    }
+        "21:30",
 
-    else{
+        "22:00"
+    ];
 
-        end =
-        timeToDate("08:00");
+    let nearest =
+    null;
 
-        if(
-            now.getHours()
-            >= 21
-        ){
+    candidates.forEach(
+        time=>{
 
-            end.setDate(
-                end.getDate() + 1
+            const d =
+            timeToDate(
+                time
             );
+
+            if(
+                d < now
+            ){
+
+                d.setDate(
+                    d.getDate()+1
+                );
+            }
+
+            if(
+
+                !nearest
+
+                ||
+
+                d < nearest
+
+            ){
+
+                nearest = d;
+            }
         }
-    }
-
-    return end;
-}
-
-// ----------------------------
-// HEADER
-// ----------------------------
-
-function updateShiftHeader(){
-
-    const shift =
-    getCurrentShift();
-
-    currentShiftEl.textContent =
-    shift;
-
-    const end =
-    getShiftEnd(
-        shift
     );
 
-    shiftCountdown.textContent =
+    return nearest;
+}
+
+// ==========================================
+// HEADER UPDATE
+// ==========================================
+
+function updateHeader(){
+
+    const shifts =
+    getActiveShifts();
+
+    activeShiftDisplay
+    .textContent =
+
+    shifts.join(
+        " + "
+    );
+
+    const next =
+    getNextBoundary();
+
+    shiftCountdown
+    .textContent =
+
     formatRemaining(
-        end - new Date()
+        next - new Date()
     );
 }
 
 setInterval(
-    updateShiftHeader,
+    updateHeader,
     1000
 );
 
-updateShiftHeader();
+updateHeader();
 
-// ----------------------------
+// ==========================================
 // AUTO LOAD EXCEL
-// ----------------------------
+// shifts.xlsx
+// ==========================================
 
-async function loadExcelAutomatically(){
+async function loadExcel(){
 
     try{
 
@@ -327,7 +513,8 @@ async function loadExcelAutomatically(){
         );
 
         const buffer =
-        await response.arrayBuffer();
+        await response
+        .arrayBuffer();
 
         const workbook =
         XLSX.read(
@@ -350,7 +537,7 @@ async function loadExcelAutomatically(){
             }
         );
 
-        processRoster(
+        processMonthRoster(
             rows
         );
     }
@@ -367,18 +554,21 @@ async function loadExcelAutomatically(){
     }
 }
 
-// ----------------------------
-// PROCESS EXCEL
-// ----------------------------
+// ==========================================
+// BUILD ENTIRE MONTH
+// FROM EXCEL
+// ==========================================
 
-function processRoster(rows){
+function processMonthRoster(
+    rows
+){
 
-    todayRoster = {};
+    monthRoster = {};
 
     const headers =
     rows[1];
 
-    const employees = [
+    employeeNames = [
 
         headers[1],
 
@@ -391,104 +581,200 @@ function processRoster(rows){
         headers[5]
     ];
 
-    const today =
-    new Date();
-
-    let todayRow =
-    null;
-
     for(
+
         let i = 2;
+
         i < rows.length;
+
         i++
+
     ){
 
         const row =
         rows[i];
 
         if(
-            !row ||
-            !row[0]
-        ) continue;
-
-        const serial =
-        row[0];
-
-        if(
-            typeof serial
+            !row
+            ||
+            typeof row[0]
             !== "number"
-        ) continue;
-
-        const excelDate =
-        new Date(
-
-            (
-                serial
-                -
-                25569
-            )
-            *
-            86400
-            *
-            1000
-        );
-
-        if(
-
-            excelDate.getDate()
-            ===
-            today.getDate()
-
-            &&
-
-            excelDate.getMonth()
-            ===
-            today.getMonth()
-
         ){
 
-            todayRow =
-            row;
-
-            break;
+            continue;
         }
-    }
 
-    if(!todayRow){
-
-        console.error(
-            "Today's roster not found"
+        const date =
+        excelToDate(
+            row[0]
         );
 
-        return;
+        const key =
+        getDateKey(
+            date
+        );
+
+        monthRoster[
+            key
+        ] = {};
+
+        employeeNames.forEach(
+
+            (
+                employee,
+                index
+            )=>{
+
+                monthRoster[
+                    key
+                ][
+                    employee
+                ] =
+
+                String(
+                    row[
+                        index+1
+                    ]
+                )
+
+                .trim()
+
+                .toUpperCase();
+            }
+        );
     }
 
-    employees.forEach(
-        (
-            name,
-            index
-        )=>{
-
-            todayRoster[
-                name
-            ] =
-
-            String(
-                todayRow[
-                    index + 1
-                ]
-            )
-            .trim()
-            .toUpperCase();
-        }
+    const todayKey =
+    getDateKey(
+        new Date()
     );
 
-    buildDashboard();
+    currentDateKey =
+    todayKey;
+
+    todayRoster =
+    monthRoster[
+        todayKey
+    ] || {};
+
+    console.log(
+        "Month Roster Loaded",
+        monthRoster
+    );
+
+    console.log(
+        "Today's Roster",
+        todayRoster
+    );
+
+    populateEmployeeDropdown();
 }
 
-// ----------------------------
-// COUNTS
-// ----------------------------
+// ==========================================
+// POPULATE OFF FINDER
+// ==========================================
+
+function populateEmployeeDropdown(){
+
+    employeeSelect.innerHTML =
+
+    `
+    <option value="">
+    Select Employee
+    </option>
+    `;
+
+    employeeNames.forEach(
+        employee=>{
+
+            employeeSelect
+            .innerHTML +=
+
+            `
+            <option value="${employee}">
+            ${employee}
+            </option>
+            `;
+        }
+    );
+}
+
+// ==========================================
+// PART 1 END
+// ==========================================
+//
+// NEXT:
+// Generate V2 script.js Part 2
+//
+// Part 2 includes:
+//
+// updateCounts()
+// buildDashboard()
+// buildStaffCards()
+// next OFF calculation
+// upcoming shift card
+// progress bars
+// auto shift refresh
+//
+// ==========================================
+// INFOSEC SHIFT COMMAND CENTER V2
+// script.js PART 2
+// DASHBOARD + STAFF CARDS
+// ==========================================
+
+// ==========================================
+// SHIFT END TIME
+// ==========================================
+
+function getShiftEnd(shift){
+
+    const now = new Date();
+
+    let end;
+
+    if(shift === "S1"){
+
+        end = timeToDate("15:30");
+    }
+
+    else if(shift === "S2"){
+
+        end = timeToDate("22:00");
+    }
+
+    else{
+
+        end = timeToDate("08:00");
+
+        if(now.getHours() >= 21){
+
+            end.setDate(
+                end.getDate() + 1
+            );
+        }
+    }
+
+    return end;
+}
+
+// ==========================================
+// SHIFT START TIME
+// ==========================================
+
+function getShiftStart(shift){
+
+    if(shift === "S1")
+        return timeToDate("07:30");
+
+    if(shift === "S2")
+        return timeToDate("13:30");
+
+    return timeToDate("21:30");
+}
+
+// ==========================================
+// COUNTERS
+// ==========================================
 
 function updateCounts(){
 
@@ -497,43 +783,31 @@ function updateCounts(){
     let s3 = 0;
     let off = 0;
 
-    Object.values(
-        todayRoster
-    ).forEach(
-        shift=>{
+    Object.values(todayRoster)
+    .forEach(shift=>{
 
-            if(
-                shift === "S1"
-            ) s1++;
+        if(shift === "S1")
+            s1++;
 
-            else if(
-                shift === "S2"
-            ) s2++;
+        else if(shift === "S2")
+            s2++;
 
-            else if(
-                shift === "S3"
-            ) s3++;
+        else if(shift === "S3")
+            s3++;
 
-            else off++;
-        }
-    );
+        else
+            off++;
+    });
 
-    s1Count.textContent =
-    s1;
-
-    s2Count.textContent =
-    s2;
-
-    s3Count.textContent =
-    s3;
-
-    offCount.textContent =
-    off;
+    s1Count.textContent = s1;
+    s2Count.textContent = s2;
+    s3Count.textContent = s3;
+    offCount.textContent = off;
 }
 
-// ----------------------------
-// OFF PEOPLE
-// ----------------------------
+// ==========================================
+// OFF TODAY SECTION
+// ==========================================
 
 function updateOffPeople(){
 
@@ -542,40 +816,115 @@ function updateOffPeople(){
         "offPeople"
     );
 
+    if(!container) return;
+
     container.innerHTML = "";
 
-    Object.entries(
-        todayRoster
-    ).forEach(
+    Object.entries(todayRoster)
+    .forEach(([name,shift])=>{
 
-        ([name,shift])=>{
+        if(shift === "OFF"){
 
-            if(
-                shift === "OFF"
-            ){
+            const div =
+            document.createElement(
+                "div"
+            );
 
-                const div =
-                document.createElement(
-                    "div"
-                );
+            div.className =
+            "off-person";
 
-                div.className =
-                "off-person";
+            div.textContent =
+            name;
 
-                div.textContent =
-                name;
+            container.appendChild(
+                div
+            );
+        }
+    });
+}
 
-                container.appendChild(
-                    div
-                );
-            }
+// ==========================================
+// NEXT OFF CALCULATOR
+// ==========================================
+
+function findNextOff(employee){
+
+    const dates =
+    Object.keys(monthRoster)
+    .sort();
+
+    const today =
+    currentDateKey;
+
+    let found = null;
+
+    for(let i=0;i<dates.length;i++){
+
+        const date = dates[i];
+
+        if(date < today)
+            continue;
+
+        const shift =
+        monthRoster[date][employee];
+
+        if(shift === "OFF"){
+
+            found = date;
+            break;
+        }
+    }
+
+    if(!found)
+        return "No OFF";
+
+    const d =
+    new Date(found);
+
+    return d.toLocaleDateString(
+        "en-GB",
+        {
+            day:"numeric",
+            month:"short",
+            weekday:"short"
         }
     );
 }
 
-// ----------------------------
+// ==========================================
+// ACTIVE STAFF
+// ==========================================
+
+function getEmployeesCurrentlyWorking(){
+
+    const activeShifts =
+    getActiveShifts();
+
+    const result = [];
+
+    Object.entries(todayRoster)
+    .forEach(([name,shift])=>{
+
+        if(
+            activeShifts.includes(
+                shift
+            )
+        ){
+
+            result.push({
+
+                name,
+                shift
+            });
+        }
+    });
+
+    return result;
+}
+
+// ==========================================
 // BUILD DASHBOARD
-// ----------------------------
+// ==========================================
 
 function buildDashboard(){
 
@@ -588,213 +937,260 @@ function buildDashboard(){
 
     activeCards = [];
 
-    const currentShift =
-    getCurrentShift();
+    const staff =
+    getEmployeesCurrentlyWorking();
 
-    Object.entries(
-        todayRoster
-    ).forEach(
+    staff.forEach(employee=>{
 
-        ([name,shift])=>{
+        createStaffCard(
+            employee.name,
+            employee.shift
+        );
+    });
 
-            if(
-                shift
-                !==
-                currentShift
-            ) return;
-
-            const clone =
-            template.content.cloneNode(
-                true
-            );
-
-            clone.querySelector(
-                ".staff-name"
-            ).textContent =
-            name;
-
-            clone.querySelector(
-                ".staff-shift"
-            ).innerHTML =
-
-            `
-            ${shift}
-            <br>
-            <small>
-            ${SHIFT_DISPLAY[shift]}
-            </small>
-            `;
-
-            const img =
-            clone.querySelector(
-                ".avatar"
-            );
-
-            img.src =
-
-            PHOTO_MAP[
-                String(name)
-                .toUpperCase()
-            ]
-
-            ||
-
-            `https://ui-avatars.com/api/?background=00d9ff&color=fff&name=${encodeURIComponent(name)}`;
-
-            const card =
-            clone.querySelector(
-                ".staff-card"
-            );
-
-            staffContainer.appendChild(
-                clone
-            );
-
-            activeCards.push({
-
-                card,
-
-                shift
-            });
-        }
-    );
-
-    buildNextShift();
+    buildUpcomingShift();
 
     updateCards();
 }
 
-// ----------------------------
-// CARD UPDATE
-// ----------------------------
+// ==========================================
+// CREATE STAFF CARD
+// ==========================================
+
+function createStaffCard(
+    name,
+    shift
+){
+
+    const clone =
+    template.content.cloneNode(
+        true
+    );
+
+    const avatar =
+    clone.querySelector(
+        ".avatar"
+    );
+
+    const nameEl =
+    clone.querySelector(
+        ".staff-name"
+    );
+
+    const shiftEl =
+    clone.querySelector(
+        ".staff-shift"
+    );
+
+    const nextOffEl =
+    clone.querySelector(
+        ".next-off"
+    );
+
+    nameEl.textContent =
+    name;
+
+    shiftEl.innerHTML =
+
+    `
+    ${shift}
+    <br>
+    <small>
+    ${SHIFTS[shift].label}
+    </small>
+    `;
+
+    const key =
+    name.toUpperCase();
+
+    avatar.src =
+
+    PHOTO_MAP[key]
+
+    ||
+
+    `https://ui-avatars.com/api/?background=00d9ff&color=fff&name=${encodeURIComponent(name)}`;
+
+    if(nextOffEl){
+
+        nextOffEl.innerHTML =
+
+        `
+        Next OFF:
+        <br>
+        ${findNextOff(name)}
+        `;
+    }
+
+    const card =
+    clone.querySelector(
+        ".staff-card"
+    );
+
+    staffContainer.appendChild(
+        clone
+    );
+
+    activeCards.push({
+
+        card,
+        shift
+    });
+}
+
+// ==========================================
+// PROGRESS ENGINE
+// ==========================================
 
 function updateCards(){
 
-    const currentShift =
-    getCurrentShift();
+    activeCards.forEach(item=>{
 
-    const info =
-    SHIFTS[
-        currentShift
-    ];
+        const shift =
+        item.shift;
 
-    const start =
-    timeToDate(
-        info.start
-    );
+        const start =
+        getShiftStart(
+            shift
+        );
 
-    const end =
-    getShiftEnd(
-        currentShift
-    );
+        const end =
+        getShiftEnd(
+            shift
+        );
 
-    activeCards.forEach(
-        item=>{
+        const now =
+        new Date();
 
-            const fill =
-            item.card.querySelector(
-                ".progress-fill"
-            );
+        const total =
+        end - start;
 
-            const text =
-            item.card.querySelector(
-                ".progress-text"
-            );
+        const elapsed =
+        now - start;
 
-            const remain =
-            item.card.querySelector(
-                ".remaining-time"
-            );
+        let percent =
 
-            const total =
-            end - start;
+        (
+            elapsed
+            /
+            total
+        )
 
-            const done =
-            new Date() -
-            start;
+        * 100;
 
-            let percent =
-            (
-                done
-                /
-                total
+        percent =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percent
             )
-            *
-            100;
+        );
 
-            percent =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    percent
-                )
-            );
+        const fill =
+        item.card.querySelector(
+            ".progress-fill"
+        );
+
+        const text =
+        item.card.querySelector(
+            ".progress-text"
+        );
+
+        const remain =
+        item.card.querySelector(
+            ".remaining-time"
+        );
+
+        if(fill){
 
             fill.style.width =
             percent + "%";
+        }
+
+        if(text){
 
             text.textContent =
-            Math.floor(
-                percent
-            )
-            + "%";
+
+            Math.floor(percent)
+
+            + "% Complete";
+        }
+
+        if(remain){
 
             remain.textContent =
 
             formatRemaining(
-                end - new Date()
+                end - now
             )
 
             +
 
             " Remaining";
         }
-    );
+    });
 }
+
+// ==========================================
+// LIVE CARD REFRESH
+// ==========================================
 
 setInterval(
     updateCards,
     1000
 );
 
-// ----------------------------
-// NEXT SHIFT
-// ----------------------------
+// ==========================================
+// UPCOMING SHIFT
+// ==========================================
 
-function buildNextShift(){
+function getNextShift(){
 
-    const current =
-    getCurrentShift();
-
-    let next;
+    const active =
+    getActiveShifts();
 
     if(
-        current === "S1"
+        active.includes("S1")
+        &&
+        active.includes("S2")
     ){
 
-        next = "S2";
+        return "S3";
     }
 
-    else if(
-        current === "S2"
+    if(
+        active.includes("S2")
+        &&
+        active.includes("S3")
     ){
 
-        next = "S3";
+        return "S1";
     }
 
-    else{
+    if(active.includes("S1"))
+        return "S2";
 
-        next = "S1";
-    }
+    if(active.includes("S2"))
+        return "S3";
+
+    return "S1";
+}
+
+// ==========================================
+// NEXT SHIFT CARD
+// ==========================================
+
+function buildUpcomingShift(){
+
+    const next =
+    getNextShift();
 
     nextShiftName.textContent =
     next;
 
     nextShiftTime.textContent =
-    SHIFT_DISPLAY[
-        next
-    ];
+    SHIFTS[next].label;
 
     const people =
 
@@ -803,12 +1199,12 @@ function buildNextShift(){
     )
 
     .filter(
-        ([n,s])=>
-        s === next
+        ([name,shift])=>
+        shift === next
     )
 
     .map(
-        ([n])=>n
+        ([name])=>name
     );
 
     nextShiftPeople.innerHTML =
@@ -821,37 +1217,529 @@ function buildNextShift(){
 
     :
 
-    "No staff";
+    "No Staff";
 }
 
-// ----------------------------
-// SHIFT CHANGE AUTO REFRESH
-// ----------------------------
+// ==========================================
+// SHIFT CHANGE WATCHER
+// ==========================================
 
-let lastShift =
-getCurrentShift();
+let lastShiftState =
+
+JSON.stringify(
+    getActiveShifts()
+);
 
 setInterval(()=>{
 
     const current =
-    getCurrentShift();
+
+    JSON.stringify(
+        getActiveShifts()
+    );
 
     if(
-        current
-        !==
-        lastShift
+        current !==
+        lastShiftState
     ){
 
-        lastShift =
+        lastShiftState =
         current;
 
         buildDashboard();
     }
 
-},30000);
+},15000);
 
-// ----------------------------
-// START
-// ----------------------------
+// ==========================================
+// INITIAL DASHBOARD
+// ==========================================
 
-loadExcelAutomatically();
+function initializeDashboard(){
+
+    buildDashboard();
+
+    updateCards();
+
+    buildUpcomingShift();
+}
+
+// ==========================================
+// PART 2 END
+// ==========================================
+//
+// NEXT:
+//
+// Generate V2 script.js Part 3
+//
+// Includes:
+//
+// Calendar modal
+// Date click roster
+// OFF Finder
+// Modal controls
+// Startup sequence
+// loadExcel()
+// initializeDashboard()
+//
+// ==========================================
+// INFOSEC SHIFT COMMAND CENTER V2
+// script.js PART 3
+// CALENDAR + OFF FINDER + STARTUP
+// ==========================================
+
+// ==========================================
+// CALENDAR MODAL OPEN
+// ==========================================
+
+if(calendarBtn){
+
+    calendarBtn.addEventListener(
+        "click",
+        ()=>{
+
+            buildCalendar();
+
+            calendarModal.classList.add(
+                "show"
+            );
+        }
+    );
+}
+
+// ==========================================
+// OFF FINDER MODAL OPEN
+// ==========================================
+
+if(offFinderBtn){
+
+    offFinderBtn.addEventListener(
+        "click",
+        ()=>{
+
+            offModal.classList.add(
+                "show"
+            );
+        }
+    );
+}
+
+// ==========================================
+// CLOSE BUTTONS
+// ==========================================
+
+document
+.querySelectorAll(".close-btn")
+.forEach(btn=>{
+
+    btn.addEventListener(
+        "click",
+        ()=>{
+
+            calendarModal.classList.remove(
+                "show"
+            );
+
+            offModal.classList.remove(
+                "show"
+            );
+        }
+    );
+});
+
+// ==========================================
+// CLICK OUTSIDE MODAL
+// ==========================================
+
+window.addEventListener(
+    "click",
+    e=>{
+
+        if(
+            e.target === calendarModal
+        ){
+
+            calendarModal.classList.remove(
+                "show"
+            );
+        }
+
+        if(
+            e.target === offModal
+        ){
+
+            offModal.classList.remove(
+                "show"
+            );
+        }
+    }
+);
+
+// ==========================================
+// BUILD MONTH CALENDAR
+// ==========================================
+
+function buildCalendar(){
+
+    if(!calendarGrid)
+        return;
+
+    calendarGrid.innerHTML = "";
+
+    const dates =
+    Object.keys(monthRoster)
+    .sort();
+
+    dates.forEach(dateKey=>{
+
+        const date =
+        new Date(dateKey);
+
+        const day =
+        date.getDate();
+
+        const weekday =
+        date.toLocaleDateString(
+            "en-GB",
+            {
+                weekday:"short"
+            }
+        );
+
+        const div =
+        document.createElement(
+            "div"
+        );
+
+        div.className =
+        "calendar-day";
+
+        div.innerHTML =
+
+        `
+        <strong>${day}</strong>
+        <br>
+        <small>${weekday}</small>
+        `;
+
+        div.addEventListener(
+            "click",
+            ()=>{
+
+                showRosterForDate(
+                    dateKey
+                );
+            }
+        );
+
+        calendarGrid.appendChild(
+            div
+        );
+    });
+}
+
+// ==========================================
+// SHOW ROSTER OF SELECTED DAY
+// ==========================================
+
+function showRosterForDate(
+    dateKey
+){
+
+    const roster =
+    monthRoster[
+        dateKey
+    ];
+
+    if(
+        !roster
+    ){
+
+        selectedDayRoster.innerHTML =
+        "No roster found";
+
+        return;
+    }
+
+    let s1 = [];
+    let s2 = [];
+    let s3 = [];
+    let off = [];
+
+    Object.entries(roster)
+    .forEach(
+        ([name,shift])=>{
+
+            if(
+                shift === "S1"
+            ){
+
+                s1.push(name);
+            }
+
+            else if(
+                shift === "S2"
+            ){
+
+                s2.push(name);
+            }
+
+            else if(
+                shift === "S3"
+            ){
+
+                s3.push(name);
+            }
+
+            else{
+
+                off.push(name);
+            }
+        }
+    );
+
+    selectedDayRoster.innerHTML =
+
+    `
+    <h3>
+    ${new Date(dateKey)
+        .toLocaleDateString(
+            "en-GB",
+            {
+                weekday:"long",
+                day:"numeric",
+                month:"long"
+            }
+        )}
+    </h3>
+
+    <br>
+
+    <b>S1</b><br>
+    ${s1.join(", ") || "-"}
+
+    <br><br>
+
+    <b>S2</b><br>
+    ${s2.join(", ") || "-"}
+
+    <br><br>
+
+    <b>S3</b><br>
+    ${s3.join(", ") || "-"}
+
+    <br><br>
+
+    <b>OFF</b><br>
+    ${off.join(", ") || "-"}
+    `;
+}
+
+// ==========================================
+// OFF FINDER
+// ==========================================
+
+if(employeeSelect){
+
+    employeeSelect.addEventListener(
+        "change",
+        ()=>{
+            showEmployeeOffs();
+        }
+    );
+}
+
+// ==========================================
+// SHOW ALL OFFS
+// ==========================================
+
+function showEmployeeOffs(){
+
+    const employee =
+    employeeSelect.value;
+
+    if(
+        !employee
+    ){
+
+        offResults.innerHTML =
+
+        "Select an employee";
+
+        return;
+    }
+
+    const offDays = [];
+
+    Object.keys(monthRoster)
+    .sort()
+    .forEach(dateKey=>{
+
+        const shift =
+
+        monthRoster[
+            dateKey
+        ][
+            employee
+        ];
+
+        if(
+            shift === "OFF"
+        ){
+
+            const date =
+            new Date(
+                dateKey
+            );
+
+            offDays.push(
+
+                `
+                <div class="off-person">
+                ${date.toLocaleDateString(
+                    "en-GB",
+                    {
+                        weekday:"short",
+                        day:"numeric",
+                        month:"short"
+                    }
+                )}
+                </div>
+                `
+            );
+        }
+    });
+
+    offResults.innerHTML =
+
+    `
+    <h3>
+    ${employee}
+    </h3>
+
+    <br>
+
+    ${
+
+        offDays.length
+
+        ?
+
+        offDays.join("")
+
+        :
+
+        "No OFF days found"
+
+    }
+    `;
+}
+
+// ==========================================
+// DAILY ROSTER REFRESH
+// MIDNIGHT AUTO UPDATE
+// ==========================================
+
+function checkDateChange(){
+
+    const newKey =
+    getDateKey(
+        new Date()
+    );
+
+    if(
+        newKey !==
+        currentDateKey
+    ){
+
+        currentDateKey =
+        newKey;
+
+        todayRoster =
+
+        monthRoster[
+            newKey
+        ] || {};
+
+        buildDashboard();
+    }
+}
+
+setInterval(
+    checkDateChange,
+    60000
+);
+
+// ==========================================
+// LOAD DATA
+// ==========================================
+
+async function startSystem(){
+
+    await loadExcel();
+
+    initializeDashboard();
+
+    console.log(
+        "SHIFT COMMAND CENTER V2 READY"
+    );
+}
+
+startSystem();
+
+// ==========================================
+// OPTIONAL AUTO RELOAD
+// EVERY 5 MINUTES
+// Useful when shifts.xlsx
+// is replaced on server
+// ==========================================
+
+setInterval(
+    async ()=>{
+
+        try{
+
+            await loadExcel();
+
+            buildDashboard();
+
+            console.log(
+                "Roster refreshed"
+            );
+        }
+
+        catch(err){
+
+            console.error(
+                err
+            );
+        }
+
+    },
+
+    300000
+);
+
+// ==========================================
+// END OF V2 SCRIPT
+// ==========================================
+//
+// FINAL FOLDER STRUCTURE:
+//
+// /index.html
+// /style.css
+// /script.js
+// /shifts.xlsx
+//
+// /photos
+//    ashwin.jpg
+//    rahul.jpg
+//    hari.jpg
+//    ashrith.jpg
+//    manu.jpg
+//
+// Upload all to GitHub.
+// Connect GitHub to Cloudflare Pages.
+// Replace shifts.xlsx every month.
+// Site updates automatically.
+// ==========================================
