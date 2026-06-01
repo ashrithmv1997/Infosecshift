@@ -625,7 +625,7 @@ setInterval(() => {
         lastShift =
             current;
 
-        buildDashboard(updateOffPeople(););
+        buildDashboard();
     }
 
 }, 30000);
