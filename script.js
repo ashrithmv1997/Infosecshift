@@ -157,19 +157,19 @@ const SHIFTS = {
 const PHOTO_MAP = {
 
     "ASHWIN":
-    "photos/ashwin.jpg",
+    "ashwin.jpg",
 
     "RAHUL R G":
-    "photos/rahul.jpg",
+    "rahul.jpg",
 
     "HARI":
-    "photos/hari.jpg",
+    "hari.jpg",
 
     "ASHRITH":
-    "photos/ashrith.jpg",
+    "ashrith.jpg",
 
     "MANU":
-    "photos/manu.jpg"
+    "manu.jpg"
 };
 
 // ==========================================
