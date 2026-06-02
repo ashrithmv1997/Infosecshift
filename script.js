@@ -746,6 +746,9 @@ function getShiftEnd(shift){
 
         end = timeToDate("08:00");
 
+        // If shift started tonight,
+        // end is tomorrow morning
+
         if(now.getHours() >= 21){
 
             end.setDate(
@@ -763,13 +766,34 @@ function getShiftEnd(shift){
 
 function getShiftStart(shift){
 
-    if(shift === "S1")
-        return timeToDate("07:30");
+    const now = new Date();
 
-    if(shift === "S2")
-        return timeToDate("13:30");
+    let start;
 
-    return timeToDate("21:30");
+    if(shift === "S1"){
+
+        start = timeToDate("07:30");
+    }
+
+    else if(shift === "S2"){
+
+        start = timeToDate("13:30");
+    }
+
+    else{
+
+        start = timeToDate("21:30");
+
+        // After midnight but before 8 AM
+        if(now.getHours() < 8){
+
+            start.setDate(
+                start.getDate() - 1
+            );
+        }
+    }
+
+    return start;
 }
 
 // ==========================================
