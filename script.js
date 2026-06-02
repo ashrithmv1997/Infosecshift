@@ -1743,7 +1743,77 @@ setInterval(
 
     300000
 );
+// ==========================================
+// LOAD DATA
+// ==========================================
 
+async function startSystem(){
+
+    await loadExcel();
+
+    initializeDashboard();
+
+    console.log(
+        "SHIFT COMMAND CENTER V2 READY"
+    );
+}
+
+startSystem();
+
+
+// ==========================================
+// AUTO REFRESH WHEN SHIFT CHANGES
+// ==========================================
+
+function checkShiftBoundary() {
+
+    const now = new Date();
+
+    const hh = now.getHours();
+    const mm = now.getMinutes();
+
+    if (
+    (hh === 7  && mm >= 30 && mm <= 31) ||
+    (hh === 13 && mm >= 30 && mm <= 31) ||
+    (hh === 21 && mm >= 30 && mm <= 31)
+) {
+
+        console.log(
+            "Shift boundary reached"
+        );
+
+        loadExcel();
+
+        buildDashboard();
+    }
+}
+
+setInterval(
+    checkShiftBoundary,
+    60000
+);
+
+
+// ==========================================
+// REFRESH WHEN APP/TAB BECOMES ACTIVE
+// ==========================================
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (!document.hidden) {
+
+            console.log(
+                "App resumed"
+            );
+
+            loadExcel();
+
+            buildDashboard();
+        }
+    }
+);
 // ==========================================
 // END OF V2 SCRIPT
 // ==========================================
