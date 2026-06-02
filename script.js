@@ -1207,43 +1207,116 @@ function getNextShift(){
 
 function buildUpcomingShift(){
 
-    const next =
-    getNextShift();
+    const now = new Date();
+
+    let nextShift;
+    let rosterDateKey;
+
+    const mins =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+    // S1 active
+    if(
+        mins >= 450 &&
+        mins < 810
+    ){
+
+        nextShift = "S2";
+        rosterDateKey = currentDateKey;
+    }
+
+    // S1 + S2 overlap
+    else if(
+        mins >= 810 &&
+        mins < 930
+    ){
+
+        nextShift = "S3";
+        rosterDateKey = currentDateKey;
+    }
+
+    // S2 only
+    else if(
+        mins >= 930 &&
+        mins < 1290
+    ){
+
+        nextShift = "S3";
+        rosterDateKey = currentDateKey;
+    }
+
+    // S2 + S3 overlap
+    else if(
+        mins >= 1290 &&
+        mins < 1320
+    ){
+
+        nextShift = "S1";
+
+        const tomorrow =
+            new Date();
+
+        tomorrow.setDate(
+            tomorrow.getDate() + 1
+        );
+
+        rosterDateKey =
+            getDateKey(tomorrow);
+    }
+
+    // S3 only
+    else{
+
+        nextShift = "S1";
+
+        const tomorrow =
+            new Date();
+
+        if(mins >= 1320){
+
+            tomorrow.setDate(
+                tomorrow.getDate() + 1
+            );
+        }
+
+        rosterDateKey =
+            getDateKey(tomorrow);
+    }
 
     nextShiftName.textContent =
-    next;
+        nextShift;
 
     nextShiftTime.textContent =
-    SHIFTS[next].label;
+        SHIFTS[nextShift].label;
+
+    const roster =
+        monthRoster[
+            rosterDateKey
+        ] || {};
 
     const people =
-
-    Object.entries(
-        todayRoster
-    )
-
-    .filter(
-        ([name,shift])=>
-        shift === next
-    )
-
-    .map(
-        ([name])=>name
-    );
+        Object.entries(roster)
+        .filter(
+            ([name,shift]) =>
+            shift === nextShift
+        )
+        .map(
+            ([name]) => name
+        );
 
     nextShiftPeople.innerHTML =
 
-    people.length
+        people.length
 
-    ?
+        ?
 
-    people.join("<br>")
+        people.join("<br>")
 
-    :
+        :
 
-    "No Staff";
+        "No Staff";
 }
-
 // ==========================================
 // SHIFT CHANGE WATCHER
 // ==========================================
