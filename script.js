@@ -2101,31 +2101,36 @@ async function loadNotice() {
 
         board.innerHTML = `
 
-        <strong>
-        ${data.sender}
-        </strong>
+<div class="notice-card">
 
-        <br><br>
+    <div class="notice-sender">
+
+        👤 ${data.sender}
+
+    </div>
+
+    <div class="notice-message">
 
         ${data.message}
 
-        <br><br>
+    </div>
 
-        <small>
+    <div class="notice-time">
 
-        ${new Date(
-            data.timestamp
-        ).toLocaleString(
-            "en-IN",
-            {
-                timeZone:
-                "Asia/Kolkata"
-            }
-        )}
+        🕒 ${new Date(data.timestamp)
+            .toLocaleString(
+                "en-IN",
+                {
+                    timeZone:
+                    "Asia/Kolkata"
+                }
+            )}
 
-        </small>
-        `;
+    </div>
 
+</div>
+
+`;
     }
 
     catch(err){
