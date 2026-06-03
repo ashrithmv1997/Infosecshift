@@ -1910,3 +1910,162 @@ document.addEventListener(
 // Replace shifts.xlsx every month.
 // Site updates automatically.
 // ==========================================
+// =====================================
+// SHIFT ASSISTANT
+// =====================================
+
+const assistantBtn =
+document.getElementById(
+    "shiftAssistantBtn"
+);
+
+const assistantPanel =
+document.getElementById(
+    "shiftAssistantPanel"
+);
+
+const assistantContent =
+document.getElementById(
+    "assistantContent"
+);
+
+assistantBtn.addEventListener(
+    "click",
+    ()=>{
+
+        if(
+            assistantPanel.style.display
+            === "block"
+        ){
+
+            assistantPanel.style.display =
+            "none";
+        }
+
+        else{
+
+            buildAssistant();
+
+            assistantPanel.style.display =
+            "block";
+        }
+    }
+);
+
+// =====================================
+// NEXT WORKING SHIFT
+// =====================================
+
+function findNextWorkingShift(
+    employee
+){
+
+    const dates =
+    Object.keys(monthRoster)
+    .sort();
+
+    const today =
+    currentDateKey;
+
+    for(
+        let i=0;
+        i<dates.length;
+        i++
+    ){
+
+        const date =
+        dates[i];
+
+        if(
+            date < today
+        ) continue;
+
+        const shift =
+        monthRoster[date][employee];
+
+        if(
+            shift !== "OFF"
+        ){
+
+            return {
+
+                date,
+                shift
+            };
+        }
+    }
+
+    return null;
+}
+
+// =====================================
+// BUILD ASSISTANT
+// =====================================
+
+function buildAssistant(){
+
+    assistantContent.innerHTML =
+    "";
+
+    employeeNames.forEach(
+        employee=>{
+
+            const next =
+            findNextWorkingShift(
+                employee
+            );
+
+            const div =
+            document.createElement(
+                "div"
+            );
+
+            div.className =
+            "assistant-person";
+
+            const photo =
+
+            PHOTO_MAP[
+                employee.toUpperCase()
+            ]
+
+            ||
+
+            `https://ui-avatars.com/api/?name=${employee}`;
+
+            div.innerHTML =
+
+            `
+            <img src="${photo}">
+
+            <div>
+
+            <b>${employee}</b>
+
+            <br>
+
+            ${
+                next
+
+                ?
+
+                `${next.shift}
+                •
+                ${new Date(
+                    next.date
+                ).toLocaleDateString("en-GB")}`
+
+                :
+
+                "No Shift"
+            }
+
+            </div>
+            `;
+
+            assistantContent.appendChild(
+                div
+            );
+        }
+    );
+}
