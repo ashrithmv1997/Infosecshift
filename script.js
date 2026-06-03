@@ -2051,10 +2051,15 @@ function buildAssistant(){
 
                 `${next.shift}
                 •
-                ${new Date(
-                    next.date
-                ).toLocaleDateString("en-GB")}`
-
+                new Date(next.date)
+.toLocaleDateString(
+    "en-GB",
+    {
+        weekday:"short",
+        day:"2-digit",
+        month:"long"
+    }
+)
                 :
 
                 "No Shift"
