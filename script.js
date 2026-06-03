@@ -1956,39 +1956,34 @@ assistantBtn.addEventListener(
 // NEXT WORKING SHIFT
 // =====================================
 
-function findNextWorkingShift(
-    employee
-){
+function findNextWorkingShift(employee){
 
     const dates =
     Object.keys(monthRoster)
     .sort();
 
-    const today =
-    currentDateKey;
+    let foundToday = false;
 
-    for(
-        let i=0;
-        i<dates.length;
-        i++
-    ){
+    for(const date of dates){
 
-        const date =
-        dates[i];
+        if(date === currentDateKey){
 
-        if(
-            date < today
-        ) continue;
+            foundToday = true;
+            continue;
+        }
+
+        if(!foundToday)
+            continue;
 
         const shift =
         monthRoster[date][employee];
 
         if(
+            shift &&
             shift !== "OFF"
         ){
 
             return {
-
                 date,
                 shift
             };
@@ -1997,7 +1992,6 @@ function findNextWorkingShift(
 
     return null;
 }
-
 // =====================================
 // BUILD ASSISTANT
 // =====================================
