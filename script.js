@@ -1764,7 +1764,7 @@ function checkDateChange(){
 
 setInterval(
     checkDateChange,
-    60000
+    30000
 );
 
 // ==========================================
@@ -1863,7 +1863,7 @@ function checkShiftBoundary() {
 
 setInterval(
     checkShiftBoundary,
-    60000
+    30000
 );
 
 
