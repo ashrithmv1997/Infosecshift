@@ -2077,71 +2077,76 @@ function buildAssistant(){
         );
     });
 }
-async function loadNotice() {
+async function loadNotice(){
 
-    const board =
-    document.getElementById(
-        "shiftNoticeBoard"
-    );
+    try{
 
-    try {
-
-        const response =
-        await fetch(
+        const res = await fetch(
             "https://infosec-notice-api.ashrithmv.workers.dev/notice"
         );
 
-        const data =
-        await response.json();
+        const data = await res.json();
 
-        console.log(
-            "NOTICE DATA:",
-            data
+        const board =
+        document.getElementById(
+            "shiftNoticeBoard"
         );
+
+        if(
+            !data ||
+            !data.message
+        ){
+
+            board.innerHTML = `
+            <div class="notice-card">
+                <div class="notice-message">
+                    No active notices
+                </div>
+            </div>
+            `;
+
+            return;
+        }
 
         board.innerHTML = `
 
-<div class="notice-card">
+        <div class="notice-card">
 
-    <div class="notice-sender">
+            <div class="notice-sender">
+                👤 ${data.sender}
+            </div>
 
-        👤 ${data.sender}
+            <div class="notice-message">
+                ${data.message}
+            </div>
 
-    </div>
+            <div class="notice-time">
+                🕒 ${new Date(data.timestamp)
+                    .toLocaleString(
+                        "en-IN",
+                        {
+                            timeZone:
+                            "Asia/Kolkata"
+                        }
+                    )}
+            </div>
 
-    <div class="notice-message">
+        </div>
+        `;
 
-        ${data.message}
-
-    </div>
-
-    <div class="notice-time">
-
-        🕒 ${new Date(data.timestamp)
-            .toLocaleString(
-                "en-IN",
-                {
-                    timeZone:
-                    "Asia/Kolkata"
-                }
-            )}
-
-    </div>
-
-</div>
-
-`;
     }
 
     catch(err){
 
-        console.error(
-            "NOTICE ERROR:",
-            err
-        );
+        document.getElementById(
+            "shiftNoticeBoard"
+        ).innerHTML = `
+        <div class="notice-card">
+            Unable to load notices
+        </div>
+        `;
 
-        board.innerHTML =
-        "Failed to load notice";
+        console.error(err);
     }
 }
 loadNotice();
