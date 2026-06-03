@@ -2082,9 +2082,7 @@ async function loadNotice(){
 try{
 
 const res =
-await fetch(
-"https://infosecshift.ashrithmv.workers.dev/notice"
-);
+await fetch("https://infosec-notice-api.ashrithmv.workers.dev/notice");
 
 const notice =
 await res.json();
