@@ -2077,3 +2077,62 @@ function buildAssistant(){
         );
     });
 }
+async function loadNotice(){
+
+try{
+
+const res =
+await fetch(
+"https://your-worker.workers.dev/notice"
+);
+
+const notice =
+await res.json();
+
+const board =
+document.getElementById(
+"shiftNoticeBoard"
+);
+
+if(!notice.message){
+
+board.innerHTML =
+"No active notices";
+
+return;
+}
+
+board.innerHTML =
+
+`
+<h3>📢 Shift Notice</h3>
+
+<b>${notice.employee}</b>
+
+<br><br>
+
+${notice.message}
+
+<br><br>
+
+<small>
+
+${new Date(notice.time)
+.toLocaleString()}
+
+</small>
+`;
+}
+
+catch(err){
+
+console.error(err);
+}
+}
+
+loadNotice();
+
+setInterval(
+loadNotice,
+30000
+);
