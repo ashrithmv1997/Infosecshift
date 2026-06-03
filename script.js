@@ -2087,7 +2087,7 @@ await fetch(
 );
 
 const notice =
-await res.json();
+await Response.json();
 
 const board =
 document.getElementById(
