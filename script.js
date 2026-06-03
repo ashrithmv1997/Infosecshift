@@ -2060,7 +2060,7 @@ function buildAssistant(){
             }
 
             </div>
-            `;
+            `
 
             assistantContent.appendChild(
                 div
