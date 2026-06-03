@@ -2077,60 +2077,66 @@ function buildAssistant(){
         );
     });
 }
-async function loadNotice(){
+async function loadNotice() {
 
-try{
+    try {
 
-const res =
-await fetch("https://infosec-notice-api.ashrithmv.workers.dev/notice");
+        const res = await fetch(
+            "https://infosec-notice-api.ashrithmv.workers.dev/notice"
+        );
 
-const notice =
-await res.json();
+        const data = await res.json();
 
-const board =
-document.getElementById(
-"shiftNoticeBoard"
-);
+        const board =
+        document.getElementById(
+            "shiftNoticeBoard"
+        );
 
-if(!notice.message){
+        if(!data.message){
 
-board.innerHTML =
-"No active notices";
+            board.innerHTML =
+            "No notices";
 
-return;
+            return;
+        }
+
+        board.innerHTML = `
+
+            <strong>
+                ${data.sender}
+            </strong>
+
+            <br><br>
+
+            ${data.message}
+
+            <br><br>
+
+            <small>
+
+            ${new Date(data.timestamp)
+                .toLocaleString(
+                    "en-IN",
+                    {
+                        timeZone:
+                        "Asia/Kolkata",
+
+                        day:"2-digit",
+                        month:"short",
+
+                        hour:"2-digit",
+                        minute:"2-digit"
+                    }
+                )}
+
+            </small>
+
+        `;
+
+    }
+
+    catch(err){
+
+        console.error(err);
+    }
 }
-
-board.innerHTML =
-
-`
-<h3>📢 Shift Notice</h3>
-
-<b>${notice.employee}</b>
-
-<br><br>
-
-${notice.message}
-
-<br><br>
-
-<small>
-
-${new Date(notice.time)
-.toLocaleString()}
-
-</small>
-`;
-}
-
-catch(err){
-
-console.error(err);
-}
-}
-
-loadNotice();
-
-setInterval(
-loadNotice,
-30000
-);
