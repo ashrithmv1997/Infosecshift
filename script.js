@@ -1998,73 +1998,82 @@ function findNextWorkingShift(employee){
 
 function buildAssistant(){
 
-    assistantContent.innerHTML =
-    "";
+    assistantContent.innerHTML = "";
 
-    employeeNames.forEach(
-        employee=>{
+    employeeNames.forEach(employee => {
 
-            const next =
-            findNextWorkingShift(
-                employee
-            );
+        const next =
+        findNextWorkingShift(employee);
 
-            const div =
-            document.createElement(
-                "div"
-            );
+        const todayShift =
+        todayRoster[employee] || "OFF";
 
-            div.className =
-            "assistant-person";
+        const div =
+        document.createElement("div");
 
-            const photo =
+        div.className =
+        "assistant-person";
 
-            PHOTO_MAP[
-                employee.toUpperCase()
-            ]
+        const photo =
 
-            ||
+        PHOTO_MAP[
+            employee.toUpperCase()
+        ]
 
-            `https://ui-avatars.com/api/?name=${employee}`;
+        ||
 
-            div.innerHTML =
+        `https://ui-avatars.com/api/?background=00d9ff&color=fff&name=${encodeURIComponent(employee)}`;
 
-            `
-            <img src="${photo}">
+        let nextShiftText =
+        "No upcoming shift";
+
+        if(next){
+
+            const formattedDate =
+
+            new Date(next.date)
+
+            .toLocaleDateString(
+                "en-GB",
+                {
+                    weekday:"short",
+                    day:"2-digit",
+                    month:"long"
+                }
+            )
+
+            .replace(",","");
+
+            nextShiftText =
+
+            `Next: ${next.shift} • ${formattedDate}`;
+        }
+
+        div.innerHTML = `
+
+            <img
+                src="${photo}"
+                alt="${employee}"
+            >
 
             <div>
 
-            <b>${employee}</b>
+                <b>${employee}</b>
 
-            <br>
+                <br>
 
-            ${
-                next
+                Today: ${todayShift}
 
-                ?
+                <br>
 
-                `${next.shift}
-                •
-                new Date(next.date)
-.toLocaleDateString(
-    "en-GB",
-    {
-        weekday:"short",
-        day:"2-digit",
-        month:"long"
-    }
-)
-                :
-
-                "No Shift"
-            }
+                ${nextShiftText}
 
             </div>
-            `
 
-            assistantContent.appendChild(
-                div
-            );
-        }
-    );
+        `;
+
+        assistantContent.appendChild(
+            div
+        );
+    });
 }
