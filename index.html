@@ -116,20 +116,31 @@
     
 <!-- TEAM NOTICE BOARD -->
 
-<div class="notice-board glass">
+noticeContainer.innerHTML = `
+<div class="notice-card">
 
-    <h2>📢 Shift Notices</h2>
+    <h3>📢 Shift Notice</h3>
 
-    <div id="noticeContainer">
+    <strong>${data.sender}</strong>
 
-<div id="shiftNoticeBoard" class="glass notice-board">
+    <p>${data.message}</p>
 
-Loading notice...
+    <small>
+        ${new Date(data.timestamp)
+            .toLocaleString(
+                "en-IN",
+                {
+                    timeZone: "Asia/Kolkata",
+                    day: "2-digit",
+                    month: "short",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            )}
+    </small>
 
 </div>
-    </div>
-
-</div>
+`;
 
     <!-- ===================================== -->
     <!-- ACTIVE STAFF -->
