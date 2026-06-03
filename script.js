@@ -2079,64 +2079,69 @@ function buildAssistant(){
 }
 async function loadNotice() {
 
+    const board =
+    document.getElementById(
+        "shiftNoticeBoard"
+    );
+
     try {
 
-        const res = await fetch(
+        const response =
+        await fetch(
             "https://infosec-notice-api.ashrithmv.workers.dev/notice"
         );
 
-        const data = await res.json();
+        const data =
+        await response.json();
 
-        const board =
-        document.getElementById(
-            "shiftNoticeBoard"
+        console.log(
+            "NOTICE DATA:",
+            data
         );
-
-        if(!data.message){
-
-            board.innerHTML =
-            "No notices";
-
-            return;
-        }
 
         board.innerHTML = `
 
-            <strong>
-                ${data.sender}
-            </strong>
+        <strong>
+        ${data.sender}
+        </strong>
 
-            <br><br>
+        <br><br>
 
-            ${data.message}
+        ${data.message}
 
-            <br><br>
+        <br><br>
 
-            <small>
+        <small>
 
-            ${new Date(data.timestamp)
-                .toLocaleString(
-                    "en-IN",
-                    {
-                        timeZone:
-                        "Asia/Kolkata",
+        ${new Date(
+            data.timestamp
+        ).toLocaleString(
+            "en-IN",
+            {
+                timeZone:
+                "Asia/Kolkata"
+            }
+        )}
 
-                        day:"2-digit",
-                        month:"short",
-
-                        hour:"2-digit",
-                        minute:"2-digit"
-                    }
-                )}
-
-            </small>
-
+        </small>
         `;
 
     }
 
     catch(err){
 
-        console.error(err);
+        console.error(
+            "NOTICE ERROR:",
+            err
+        );
+
+        board.innerHTML =
+        "Failed to load notice";
     }
 }
+loadNotice();
+
+setInterval(
+    loadNotice,
+    10000
+);
