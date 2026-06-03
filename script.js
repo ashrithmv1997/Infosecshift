@@ -2083,7 +2083,7 @@ try{
 
 const res =
 await fetch(
-"https://your-worker.workers.dev/notice"
+"https://infosec-notice-api.ashrithmv.workers.dev/notice"
 );
 
 const notice =
