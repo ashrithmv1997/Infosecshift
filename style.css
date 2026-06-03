@@ -1034,22 +1034,109 @@ SHIFT ASSISTANT
     object-fit:cover;
 }
 
+/* ==========================================
+SHIFT NOTICE V2
+========================================== */
+
 .notice-board{
 
-    margin-top:30px;
+    margin-bottom:25px;
 
     padding:25px;
 
-    border-radius:20px;
+    border-radius:25px;
 }
 
-.notice-item{
+#shiftNoticeBoard{
 
-    margin-top:10px;
+    margin-top:18px;
+}
 
-    padding:12px;
+.notice-card{
 
-    border-radius:12px;
+    background:
+    rgba(255,255,255,.06);
 
-    background:rgba(0,217,255,.08);
+    border:1px solid
+    rgba(0,217,255,.25);
+
+    border-radius:18px;
+
+    padding:18px 22px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    animation:
+    noticeFloat 4s ease-in-out infinite;
+
+    box-shadow:
+    0 0 25px rgba(0,217,255,.12);
+}
+
+.notice-card::before{
+
+    content:'';
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:5px;
+    height:100%;
+
+    background:
+    linear-gradient(
+        180deg,
+        var(--cyan),
+        var(--purple)
+    );
+}
+
+.notice-sender{
+
+    color:var(--cyan);
+
+    font-size:1.05rem;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+    letter-spacing:.5px;
+}
+
+.notice-message{
+
+    color:white;
+
+    font-size:1rem;
+
+    line-height:1.7;
+
+    margin-bottom:15px;
+}
+
+.notice-time{
+
+    color:var(--muted);
+
+    font-size:.85rem;
+}
+
+@keyframes noticeFloat{
+
+    0%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-4px);
+    }
+
+    100%{
+        transform:translateY(0);
+    }
 }
