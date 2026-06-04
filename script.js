@@ -656,7 +656,10 @@ function processMonthRoster(
     monthRoster[
         todayKey
     ] || {};
-
+console.log(
+    "Today Roster:",
+    JSON.stringify(todayRoster, null, 2)
+);
     console.log(
         "Month Roster Loaded",
         monthRoster
