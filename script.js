@@ -559,62 +559,120 @@ async function loadExcel(){
 // FROM EXCEL
 // ==========================================
 
-function processMonthRoster(rows) {
+function processMonthRoster(
+    rows
+){
 
     monthRoster = {};
 
-    const headers = rows[1];
+    const headers =
+    rows[1];
 
-    // ✅ SAFE dynamic employee parsing (NO LIMIT 5)
-    employeeNames = headers.slice(1).filter(Boolean);
+    employeeNames = [
 
-    for (let i = 2; i < rows.length; i++) {
+        headers[1],
 
-        const row = rows[i];
-        if (!row || row.length === 0) continue;
+        headers[2],
 
-        let rawDate = row[0];
+        headers[3],
 
-        // ✅ FIX 1: handle Excel number OR string date
-        let date;
+        headers[4],
 
-        if (typeof rawDate === "number") {
-            date = excelToDate(rawDate);
-        } else {
-            date = new Date(rawDate);
+        headers[5]
+    ];
+
+    for(
+
+        let i = 2;
+
+        i < rows.length;
+
+        i++
+
+    ){
+
+        const row =
+        rows[i];
+
+        if(
+            !row
+            ||
+            typeof row[0]
+            !== "number"
+        ){
+
+            continue;
         }
 
-        // ❌ skip only if invalid date
-        if (isNaN(date.getTime())) continue;
+        const date =
+        excelToDate(
+            row[0]
+        );
 
-        const key = getDateKey(date);
+        const key =
+        getDateKey(
+            date
+        );
 
-        monthRoster[key] = {};
+        monthRoster[
+            key
+        ] = {};
 
-        employeeNames.forEach((employee, index) => {
+        employeeNames.forEach(
 
-            const value = row[index + 1];
+            (
+                employee,
+                index
+            )=>{
 
-            monthRoster[key][employee] =
-                (value ?? "OFF")
-                .toString()
+                monthRoster[
+                    key
+                ][
+                    employee
+                ] =
+
+                String(
+                    row[
+                        index+1
+                    ]
+                )
+
                 .trim()
+
                 .toUpperCase();
-        });
+            }
+        );
     }
 
-    const todayKey = getDateKey(new Date());
+    const todayKey =
+    getDateKey(
+        new Date()
+    );
 
-    currentDateKey = todayKey;
+    currentDateKey =
+    todayKey;
 
-    // ⚠️ SAFE fallback (prevents “everything gone”)
-    todayRoster = monthRoster[todayKey] || {};
+    todayRoster =
+    monthRoster[
+        todayKey
+    ] || {};
+console.log(
+    "Today Roster:",
+    JSON.stringify(todayRoster, null, 2)
+);
+    console.log(
+        "Month Roster Loaded",
+        monthRoster
+    );
 
-    console.log("Today Roster:", todayRoster);
-    console.log("Month Roster Loaded:", monthRoster);
+    console.log(
+        "Today's Roster",
+        todayRoster
+    );
 
     populateEmployeeDropdown();
 }
+
 
 // ==========================================
 // POPULATE OFF FINDER
