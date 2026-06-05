@@ -652,10 +652,17 @@ function processMonthRoster(
     currentDateKey =
     todayKey;
 
-    todayRoster =
-    monthRoster[
-        todayKey
-    ] || {};
+    if (newKey !== currentDateKey) {
+
+    // ⭐ SPECIAL RULE: DO NOT SWITCH DAY DURING S3
+    if (isS3ActiveNow()) {
+        return; // block midnight switch
+    }
+
+    currentDateKey = newKey;
+    todayRoster = monthRoster[newKey] || {};
+    buildDashboard();
+} || {};
 console.log(
     "Today Roster:",
     JSON.stringify(todayRoster, null, 2)
