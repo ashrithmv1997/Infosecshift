@@ -1,5 +1,5 @@
 // ==========================================
-// INFOSEC SHIFT COMMAND CENTER V2 (FIXED)
+// INFOSEC SHIFT COMMAND CENTER V2 (STABLE FIX)
 // ==========================================
 
 // ==========================================
@@ -25,27 +25,6 @@ const nextShiftPeople = document.getElementById("nextShiftPeople");
 
 const template = document.getElementById("staffTemplate");
 
-// MODALS
-const calendarBtn = document.getElementById("calendarBtn");
-const offFinderBtn = document.getElementById("offFinderBtn");
-
-const calendarModal = document.getElementById("calendarModal");
-const offModal = document.getElementById("offModal");
-
-const calendarGrid = document.getElementById("calendarGrid");
-const selectedDayRoster = document.getElementById("selectedDayRoster");
-
-const employeeSelect = document.getElementById("employeeSelect");
-const offResults = document.getElementById("offResults");
-
-// SHIFT ASSISTANT
-const assistantBtn = document.getElementById("shiftAssistantBtn");
-const assistantPanel = document.getElementById("shiftAssistantPanel");
-const assistantContent = document.getElementById("assistantContent");
-
-// NOTICE
-const noticeBoard = document.getElementById("shiftNoticeBoard");
-
 // ==========================================
 // SHIFT DEFINITIONS
 // ==========================================
@@ -57,7 +36,7 @@ const SHIFTS = {
 };
 
 // ==========================================
-// DATA STORE
+// DATA
 // ==========================================
 
 let monthRoster = {};
@@ -87,7 +66,7 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ==========================================
-// TIME HELPERS
+// HELPERS
 // ==========================================
 
 function excelToDate(serial) {
@@ -96,19 +75,6 @@ function excelToDate(serial) {
 
 function getDateKey(date) {
   return date.toISOString().split("T")[0];
-}
-
-// ⭐ FIX: SHIFT-AWARE DATE (IMPORTANT FIX)
-function getShiftAwareDateKey(date) {
-  const hours = date.getHours();
-
-  if (hours < 8) {
-    const d = new Date(date);
-    d.setDate(d.getDate() - 1);
-    return getDateKey(d);
-  }
-
-  return getDateKey(date);
 }
 
 function timeToDate(timeString) {
@@ -130,7 +96,7 @@ function formatRemaining(ms) {
 }
 
 // ==========================================
-// ACTIVE SHIFTS
+// ACTIVE SHIFTS (IMPORTANT FIX LOGIC)
 // ==========================================
 
 function getActiveShifts() {
@@ -147,7 +113,7 @@ function getActiveShifts() {
 }
 
 // ==========================================
-// NEXT BOUNDARY
+// NEXT SHIFT BOUNDARY
 // ==========================================
 
 function getNextBoundary() {
@@ -158,9 +124,7 @@ function getNextBoundary() {
 
   times.forEach(t => {
     const d = timeToDate(t);
-
     if (d < now) d.setDate(d.getDate() + 1);
-
     if (!nearest || d < nearest) nearest = d;
   });
 
@@ -204,7 +168,6 @@ function processMonthRoster(rows) {
   monthRoster = {};
 
   const headers = rows[1];
-
   employeeNames = headers.slice(1, 6);
 
   for (let i = 2; i < rows.length; i++) {
@@ -221,7 +184,7 @@ function processMonthRoster(rows) {
     });
   }
 
-  const todayKey = getShiftAwareDateKey(new Date());
+  const todayKey = getDateKey(new Date());
   currentDateKey = todayKey;
   todayRoster = monthRoster[todayKey] || {};
 
@@ -229,15 +192,22 @@ function processMonthRoster(rows) {
 }
 
 // ==========================================
-// DROPDOWN
+// SAFE WORKING LIST (FIXED)
 // ==========================================
 
-function populateEmployeeDropdown() {
-  employeeSelect.innerHTML = `<option value="">Select Employee</option>`;
+function getEmployeesCurrentlyWorking() {
+  const active = getActiveShifts();
+  const roster = todayRoster || {};
 
-  employeeNames.forEach(emp => {
-    employeeSelect.innerHTML += `<option value="${emp}">${emp}</option>`;
+  const result = [];
+
+  Object.entries(roster).forEach(([name, shift]) => {
+    if (active.includes(shift)) {
+      result.push({ name, shift });
+    }
   });
+
+  return result;
 }
 
 // ==========================================
@@ -258,23 +228,6 @@ function updateCounts() {
   s2Count.textContent = s2;
   s3Count.textContent = s3;
   offCount.textContent = off;
-}
-
-// ==========================================
-// SAFE TODAY ROSTER USAGE FIX
-// ==========================================
-
-function getEmployeesCurrentlyWorking() {
-  const active = getActiveShifts();
-  const result = [];
-
-  Object.entries(todayRoster || {}).forEach(([name, shift]) => {
-    if (active.includes(shift)) {
-      result.push({ name, shift });
-    }
-  });
-
-  return result;
 }
 
 // ==========================================
@@ -324,14 +277,13 @@ function createStaffCard(name, shift) {
 }
 
 // ==========================================
-// CARD PROGRESS
+// PROGRESS
 // ==========================================
 
 function updateCards() {
   activeCards.forEach(item => {
     const start = timeToDate(SHIFTS[item.shift].start);
     const end = timeToDate(SHIFTS[item.shift].end);
-
     const now = new Date();
 
     const total = end - start;
@@ -361,7 +313,7 @@ function buildUpcomingShift() {
   const mins = now.getHours() * 60 + now.getMinutes();
 
   let nextShift = "S1";
-  let dateKey = currentDateKey;
+  let dateKey = getDateKey(now);
 
   if (mins < 810) nextShift = "S2";
   else if (mins < 1320) nextShift = "S3";
@@ -377,18 +329,19 @@ function buildUpcomingShift() {
 
   const roster = monthRoster[dateKey] || {};
 
-  nextShiftPeople.innerHTML = Object.entries(roster)
-    .filter(([_, s]) => s === nextShift)
-    .map(([n]) => n)
-    .join("<br>") || "No Staff";
+  nextShiftPeople.innerHTML =
+    Object.entries(roster)
+      .filter(([_, s]) => s === nextShift)
+      .map(([n]) => n)
+      .join("<br>") || "No Staff";
 }
 
 // ==========================================
-// SHIFT CHANGE WATCHER
+// SHIFT WATCHER
 // ==========================================
 
 setInterval(() => {
-  const newKey = getShiftAwareDateKey(new Date());
+  const newKey = getDateKey(new Date());
 
   if (newKey !== currentDateKey) {
     currentDateKey = newKey;
@@ -398,7 +351,7 @@ setInterval(() => {
 }, 30000);
 
 // ==========================================
-// START SYSTEM (ONLY ONCE)
+// START
 // ==========================================
 
 async function startSystem() {
@@ -408,34 +361,3 @@ async function startSystem() {
 }
 
 document.addEventListener("DOMContentLoaded", startSystem);
-
-// ==========================================
-// NOTICE BOARD
-// ==========================================
-
-async function loadNotice() {
-  try {
-    const res = await fetch("https://infosec-notice-api.ashrithmv.workers.dev/notice");
-    if (!res.ok) return;
-
-    const notices = await res.json();
-
-    if (!Array.isArray(notices)) return;
-
-    noticeBoard.innerHTML = notices.length
-      ? notices.map(n => `
-        <div class="notice-card">
-          <div>👤 ${n.sender}</div>
-          <div>${n.message}</div>
-          <div>🕒 ${new Date(n.timestamp).toLocaleString("en-IN")}</div>
-        </div>
-      `).join("")
-      : "<div class='notice-card'>No active notices</div>";
-
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-loadNotice();
-setInterval(loadNotice, 10000);
