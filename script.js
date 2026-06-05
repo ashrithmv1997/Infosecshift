@@ -652,8 +652,10 @@ function processMonthRoster(
     currentDateKey =
     todayKey;
 
-    
-    todayRoster = monthRoster[newKey] || {};
+    todayRoster =
+    monthRoster[
+        todayKey
+    ] || {};
 console.log(
     "Today Roster:",
     JSON.stringify(todayRoster, null, 2)
