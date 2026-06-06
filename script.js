@@ -609,10 +609,22 @@ function processMonthRoster(
             row[0]
         );
 
-        const key =
-        getDateKey(
-            date
-        );
+        const rosterDate =
+new Date();
+
+if(
+    rosterDate.getHours() < 8
+){
+
+    rosterDate.setDate(
+        rosterDate.getDate() - 1
+    );
+}
+
+const todayKey =
+getDateKey(
+    rosterDate
+);
 
         monthRoster[
             key
@@ -1742,14 +1754,23 @@ function showEmployeeOffs(){
 
 function checkDateChange(){
 
+    const now = new Date();
+
+    let rosterDate = new Date(now);
+
+    // S3 continues until 08:00 AM
+    if(now.getHours() < 8){
+
+        rosterDate.setDate(
+            rosterDate.getDate() - 1
+        );
+    }
+
     const newKey =
-    getDateKey(
-        new Date()
-    );
+    getDateKey(rosterDate);
 
     if(
-        newKey !==
-        currentDateKey
+        newKey !== currentDateKey
     ){
 
         currentDateKey =
@@ -1764,12 +1785,6 @@ function checkDateChange(){
         buildDashboard();
     }
 }
-
-setInterval(
-    checkDateChange,
-    30000
-);
-
 // ==========================================
 // LOAD DATA
 // ==========================================
