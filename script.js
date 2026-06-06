@@ -571,13 +571,9 @@ function processMonthRoster(
     employeeNames = [
 
         headers[1],
-
         headers[2],
-
         headers[3],
-
         headers[4],
-
         headers[5]
     ];
 
@@ -609,22 +605,10 @@ function processMonthRoster(
             row[0]
         );
 
-        const rosterDate =
-new Date();
-
-if(
-    rosterDate.getHours() < 8
-){
-
-    rosterDate.setDate(
-        rosterDate.getDate() - 1
-    );
-}
-
-const todayKey =
-getDateKey(
-    rosterDate
-);
+        const key =
+        getDateKey(
+            date
+        );
 
         monthRoster[
             key
@@ -656,9 +640,21 @@ getDateKey(
         );
     }
 
+    const rosterDate =
+    new Date();
+
+    if(
+        rosterDate.getHours() < 8
+    ){
+
+        rosterDate.setDate(
+            rosterDate.getDate() - 1
+        );
+    }
+
     const todayKey =
     getDateKey(
-        new Date()
+        rosterDate
     );
 
     currentDateKey =
@@ -668,10 +664,7 @@ getDateKey(
     monthRoster[
         todayKey
     ] || {};
-console.log(
-    "Today Roster:",
-    JSON.stringify(todayRoster, null, 2)
-);
+
     console.log(
         "Month Roster Loaded",
         monthRoster
