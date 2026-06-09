@@ -185,6 +185,7 @@ let employeeNames = [];
 let activeCards = [];
 
 let currentDateKey = "";
+let leaveEmployees = [];
 
 // ==========================================
 // CLOCK
@@ -1109,7 +1110,31 @@ function createStaffCard(
     clone.querySelector(
         ".staff-card"
     );
+if(
+    leaveEmployees.includes(
+        name.toUpperCase()
+    )
+){
 
+    card.classList.add(
+        "on-leave"
+    );
+
+    const badge =
+    document.createElement(
+        "div"
+    );
+
+    badge.className =
+    "leave-badge";
+
+    badge.textContent =
+    "🔴 ON LEAVE";
+
+    card.appendChild(
+        badge
+    );
+}
     staffContainer.appendChild(
         clone
     );
@@ -2135,6 +2160,36 @@ function buildAssistant(){
         );
     });
 }
+async function loadLeaveStatus(){
+
+    try{
+
+        const res =
+        await fetch(
+            "https://infosec-notice-api.ashrithmv.workers.dev/leave"
+        );
+
+        const data =
+        await res.json();
+
+        leaveEmployees =
+        data.map(
+            item =>
+            item.employee.toUpperCase()
+        );
+
+        buildDashboard();
+
+    }
+
+    catch(err){
+
+        console.error(
+            "Leave Load Error",
+            err
+        );
+    }
+}
 async function loadNotice(){
 
     try{
@@ -2209,8 +2264,14 @@ async function loadNotice(){
     }
 }
 loadNotice();
+loadLeaveStatus();
 
 setInterval(
     loadNotice,
+    10000
+);
+
+setInterval(
+    loadLeaveStatus,
     10000
 );
