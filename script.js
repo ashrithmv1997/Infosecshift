@@ -2268,10 +2268,10 @@ loadLeaveStatus();
 
 setInterval(
     loadNotice,
-    10000
+    2000
 );
 
 setInterval(
     loadLeaveStatus,
-    10000
+    2000
 );
