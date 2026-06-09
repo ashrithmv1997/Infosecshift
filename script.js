@@ -640,22 +640,10 @@ function processMonthRoster(
         );
     }
 
-    const rosterDate =
-    new Date();
-
-    if(
-        rosterDate.getHours() < 8
-    ){
-
-        rosterDate.setDate(
-            rosterDate.getDate() - 1
-        );
-    }
-
-    const todayKey =
-    getDateKey(
-        rosterDate
-    );
+const todayKey =
+getDateKey(
+    new Date()
+);
 
     currentDateKey =
     todayKey;
@@ -929,31 +917,94 @@ function findNextOff(employee){
 
 function getEmployeesCurrentlyWorking(){
 
+    const now =
+    new Date();
+
+    const mins =
+        now.getHours() * 60 +
+        now.getMinutes();
+
     const activeShifts =
     getActiveShifts();
 
     const result = [];
 
-    Object.entries(todayRoster)
-    .forEach(([name,shift])=>{
+    // =====================================
+    // S3 AFTER MIDNIGHT
+    // Use YESTERDAY roster only for S3
+    // =====================================
 
-        if(
-            activeShifts.includes(
-                shift
-            )
-        ){
+    if(mins < 480){
 
-            result.push({
+        const yesterday =
+        new Date();
 
-                name,
-                shift
-            });
+        yesterday.setDate(
+            yesterday.getDate() - 1
+        );
+
+        const yesterdayKey =
+        getDateKey(
+            yesterday
+        );
+
+        const yesterdayRoster =
+        monthRoster[
+            yesterdayKey
+        ] || {};
+
+        Object.entries(
+            yesterdayRoster
+        ).forEach(
+            ([name,shift])=>{
+
+                if(
+                    shift === "S3"
+                ){
+
+                    result.push({
+                        name,
+                        shift
+                    });
+                }
+            }
+        );
+    }
+
+    // =====================================
+    // TODAY ROSTER
+    // S1 / S2 / S3
+    // =====================================
+
+    Object.entries(
+        todayRoster
+    ).forEach(
+        ([name,shift])=>{
+
+            if(
+                activeShifts.includes(
+                    shift
+                )
+            ){
+
+                // Avoid duplicate S3 staff
+                if(
+                    mins < 480 &&
+                    shift === "S3"
+                ){
+                    return;
+                }
+
+                result.push({
+                    name,
+                    shift
+                });
+            }
         }
-    });
+    );
 
     return result;
 }
-
 // ==========================================
 // BUILD DASHBOARD
 // ==========================================
@@ -1747,28 +1798,22 @@ function showEmployeeOffs(){
 
 function checkDateChange(){
 
-    const now = new Date();
-
-    let rosterDate = new Date(now);
-
-    if(now.getHours() < 8){
-
-        rosterDate.setDate(
-            rosterDate.getDate() - 1
-        );
-    }
-
     const newKey =
-    getDateKey(rosterDate);
+    getDateKey(
+        new Date()
+    );
 
     if(
         newKey !== currentDateKey
     ){
 
-        currentDateKey = newKey;
+        currentDateKey =
+        newKey;
 
         todayRoster =
-        monthRoster[newKey] || {};
+        monthRoster[
+            newKey
+        ] || {};
 
         buildDashboard();
     }
