@@ -1751,7 +1751,6 @@ function checkDateChange(){
 
     let rosterDate = new Date(now);
 
-    // S3 continues until 08:00 AM
     if(now.getHours() < 8){
 
         rosterDate.setDate(
@@ -1766,18 +1765,21 @@ function checkDateChange(){
         newKey !== currentDateKey
     ){
 
-        currentDateKey =
-        newKey;
+        currentDateKey = newKey;
 
         todayRoster =
-
-        monthRoster[
-            newKey
-        ] || {};
+        monthRoster[newKey] || {};
 
         buildDashboard();
     }
 }
+
+setInterval(
+    checkDateChange,
+    30000
+);
+
+checkDateChange();
 // ==========================================
 // LOAD DATA
 // ==========================================
