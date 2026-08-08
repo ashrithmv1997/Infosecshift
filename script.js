@@ -995,34 +995,15 @@ function processMonthRoster(
     // Automatically detect all employee columns
     // First column is Day/Date
 
-    employeeNames =
+    employeeNames = [
 
-    headers
+    String(headers[1]).trim(),
+    String(headers[2]).trim(),
+    String(headers[3]).trim(),
+    String(headers[4]).trim(),
+    String(headers[5]).trim()
 
-    .slice(1)
-
-    .filter(
-
-        value =>
-
-        value !== undefined
-
-        &&
-
-        value !== null
-
-        &&
-
-        String(value).trim() !== ""
-    )
-
-    .map(
-
-        value =>
-
-        String(value).trim()
-    );
-
+];
 
     // Data starts from row 3
 
