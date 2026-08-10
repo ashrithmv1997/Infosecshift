@@ -1243,3 +1243,94 @@ body.team-switching .stats-grid{
         max-width:150px;
     }
 }
+/* ==========================================
+STAFF CONTACT BUTTONS
+========================================== */
+
+.staff-contact-actions{
+
+    display:flex;
+    gap:10px;
+    justify-content:center;
+
+    margin:10px 0 18px;
+}
+
+.staff-contact-btn{
+
+    flex:1;
+    max-width:145px;
+
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:8px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    font-weight:600;
+    font-size:.85rem;
+
+    transition:.2s;
+}
+
+.call-btn{
+
+    color:#55dcff;
+
+    background:
+    rgba(0,217,255,.08);
+
+    border:
+    1px solid
+    rgba(0,217,255,.25);
+}
+
+.whatsapp-btn{
+
+    color:#25D366;
+
+    background:
+    rgba(37,211,102,.08);
+
+    border:
+    1px solid
+    rgba(37,211,102,.3);
+}
+
+.staff-contact-btn:hover{
+
+    transform:
+    translateY(-2px);
+}
+
+.call-btn:hover{
+
+    background:
+    rgba(0,217,255,.15);
+
+    box-shadow:
+    0 0 18px
+    rgba(0,217,255,.15);
+}
+
+.whatsapp-btn:hover{
+
+    background:
+    rgba(37,211,102,.15);
+
+    box-shadow:
+    0 0 18px
+    rgba(37,211,102,.18);
+}
+
+.whatsapp-svg{
+
+    width:20px;
+    height:20px;
+}
