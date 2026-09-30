@@ -215,6 +215,12 @@ const PHOTO_MAP = {
     "MANU":
     "manu.jpg",
 
+    "JESTIN":
+    "jestin.jpg"
+
+    "MILAN":
+    "milan.jpg"
+
 
     // SOC
     // Add their photos later if you want.
@@ -243,6 +249,8 @@ const CONTACTS = {
         "ASHWIN": "919746221620",
         "MANU": "919113843240",
         "HARI": "919847009362"
+        "JESTIN": "9497880935"
+        "MILAN": "7994555411"
     },
 
     SOC: {
@@ -2153,6 +2161,12 @@ function createStaffCard(
 
             "HARI":
             "919847009362"
+
+            "JESTIN":
+            "9497880935"
+
+            "MILAN":
+            "7994555411"
 
         },
 
