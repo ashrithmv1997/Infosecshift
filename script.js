@@ -216,10 +216,10 @@ const PHOTO_MAP = {
     "manu.jpg",
 
     "JESTIN":
-    "jestin.jpg"
+    "jestin.jpg",
 
     "MILAN":
-    "milan.jpg"
+    "milan.jpg",
 
 
     // SOC
@@ -248,8 +248,8 @@ const CONTACTS = {
         "RAHUL R G": "919946389225",
         "ASHWIN": "919746221620",
         "MANU": "919113843240",
-        "HARI": "919847009362"
-        "JESTIN": "9497880935"
+        "HARI": "919847009362",
+        "JESTIN": "9497880935",
         "MILAN": "7994555411"
     },
 
